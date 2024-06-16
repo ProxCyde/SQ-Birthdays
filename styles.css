@@ -1,0 +1,338 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #020202;
+  color: #ffffff;
+}
+
+.main-wrapper {
+  position: relative;
+  margin: 0 auto; /* Center the main wrapper */
+  padding: 10px;
+  background-image: url('images/background.jpg');
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 98%; /* Ensure it covers the full width */
+  min-height: 700px;
+}
+
+.main-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, #020202);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.main-wrapper > * {
+  position: relative;
+  z-index: 2;
+}
+
+.main-container {
+  margin: 0 auto;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  background-color: rgba(12, 12, 12, 0.9);
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 700px;
+  flex-wrap: wrap; /* Allow wrapping */
+}
+
+.top-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 700px; /* Ensure it doesn't exceed the original max-width */
+  margin: 0 auto; /* Center the top wrapper */
+  margin-bottom: 0;
+  overflow: hidden; /* Prevent content from overflowing */
+  flex-wrap: wrap; /* Allow wrapping */
+}
+
+h2 {
+  padding: 10px;
+  margin: 0;
+  color: #ffffff;
+  white-space: nowrap; /* Prevent the text from breaking */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+#current-year {
+  font-family: 'Roboto', sans-serif;
+  font-size: h2;
+  font-weight: bold;
+  white-space: nowrap; /* Prevent the text from breaking */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.month-navigation {
+  display: flex;
+  justify-content: right;
+  white-space: nowrap; /* Prevent the text from breaking */
+  flex-grow: 1; /* Allow the navigation to take available space */
+  margin: 1px; /* Add margin for spacing */
+}
+
+.month-navigation span {
+  width: 120px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+button {
+  background-color: rgba(51, 51, 51, 0.85);
+  
+  color: #ffffff;
+  border: none;
+  font-weight: bold;
+  padding: 0px;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 80px;
+  height: 30px;
+  flex-shrink: 0; /* Prevent shrinking */
+  margin-top: 0px; /* Add margin for spacing */
+}
+
+button:hover {
+  background-color: rgba(85, 85, 85, 0.85);
+  border: 1px solid #63cad1;
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 700px; /* Ensure it doesn't exceed the original max-width */
+  margin: 0 auto; /* Center the calendar container */
+  margin-top: 20px;
+}
+
+.day-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* Ensure it aligns with the calendar grid */
+  width: 100%;
+  margin-bottom: 2px;
+  margin-right: 3px;
+  box-sizing: border-box; /* Ensure padding and border are included in the width */
+  padding: 0px;
+  border-radius: 10px;
+}
+
+.day-name {
+  font-size: 12px;
+  text-align: center;
+  font-weight: normal;
+  width: 88%;
+  margin: 1px auto;
+  padding: 5px;
+  background-color: rgba(32, 32, 32, 0);
+  border-radius: 5px;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* Ensure it aligns with the day names */
+  background-color: rgba(11, 14, 14, 0);
+  padding: 0; /* Remove padding */
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.day-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  padding: 4px;
+  background-color: rgba(12, 12, 12, 0.884);
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.current-day {
+  background-color: rgba(255, 255, 255, 0.096);
+  border: 1px solid #2efff5 !important;
+  z-index: 2000;
+  position: relative;
+}
+
+.day {
+  position: relative;
+  background-color: rgba(51, 51, 51, 0.61);
+  border: 1px solid rgba(73, 73, 73, 0.8);
+  margin: 0;
+  padding: 0;
+  width: 97%;
+  height: 97%;
+  color: #eeeeee;
+  cursor: pointer;
+  text-align: center;
+  aspect-ratio: 1;
+  box-sizing: border-box;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.day:hover {
+  background-color: rgba(255, 255, 255, 0.199);
+}
+
+.day.previous-month,
+.day.next-month {
+  color: #353535;
+}
+
+.birthday-names {
+  margin-top: 0px;
+  margin-left: 2px;
+  padding-top: 25px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+  text-align: left;
+}
+
+.birthday-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 3px;
+  width: 15px;
+  height: 15px;
+  z-index: 2;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.95);
+  color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: left;
+  z-index: 1000;
+  border: 1px solid rgb(83, 235, 255);
+}
+
+.popup.fade-out {
+  animation: fadeOut 3s forwards;
+  animation-delay: 2s;
+}
+
+@keyframes fadeOut {
+  0% {
+      opacity: 1;
+  }
+  100% {
+      opacity: 0;
+  }
+}
+
+/* Media queries for responsive scaling */
+@media (max-width: 700px) {
+  .top-wrapper {
+      flex-direction: column; /* Change to column direction */
+      align-items: center; /* Center align items */
+      text-align: center; /* Center text */
+  }
+
+  .month-navigation {
+      justify-content: center; /* Center month-navigation */
+      width: 100%; /* Ensure it takes the full width */
+      margin-top: 10px; /* Add margin for spacing */
+  }
+
+  button {
+      margin: 5px 0; /* Add margin for spacing */
+  }
+}
+
+@media (max-width: 1200px) {
+  .main-wrapper {
+      max-width: 600px;
+  }
+  .day-names, #calendar {
+      max-width: 100%;
+  }
+  .day {
+      font-size: 12px;
+      padding: 4px;
+  }
+  .day-header {
+      font-size: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-wrapper {
+      max-width: 500px;
+  }
+  .day-names, #calendar {
+      max-width: 100%;
+  }
+  .day {
+      font-size: 10px;
+      padding: 3px;
+  }
+  .day-header {
+      font-size: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-wrapper {
+      max-width: 400px;
+  }
+  .day-names, #calendar {
+      max-width: 100%;
+  }
+  .day {
+      font-size: 8px;
+      padding: 2px;
+  }
+  .day-header {
+      font-size: 8px;
+  }
+}
+
+@media (max-width: 400px) {
+  .main-wrapper {
+      max-width: 300px;
+  }
+  .day-names, #calendar {
+      max-width: 100%;
+  }
+  .day {
+      font-size: 6px;
+      padding: 1px;
+  }
+  .day-header {
+      font-size: 6px;
+  }
+}

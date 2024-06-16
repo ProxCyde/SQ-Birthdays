@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VR Birthday Calendar</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="main-wrapper">
+    <div class="main-container">
+      <div class="top-wrapper">
+        <h2>SideQuest Birthdays <span id="current-year"></span></h2>
+        <div class="month-navigation">
+          <button id="prev-month">Previous</button>
+          <span id="current-month"></span>
+          <button id="next-month">Next</button>
+        </div>
+      </div>
+      <div class="calendar-container">
+        <div class="day-names" id="day-names"></div>
+        <div id="calendar" class="calendar-grid"></div>
+      </div>
+      <div id="popup" class="popup">
+        <span id="popup-content"></span>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
