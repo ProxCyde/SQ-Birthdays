@@ -1,13 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
   const calendar = document.getElementById('calendar');
-  const dayNamesContainer = document.getElementById('day-names'); // Get the day names container
+  const dayNamesContainer = document.getElementById('day-names');
   const currentMonthElement = document.getElementById('current-month');
   const prevMonthButton = document.getElementById('prev-month');
   const nextMonthButton = document.getElementById('next-month');
   const popup = document.getElementById('popup');
   const popupContent = document.getElementById('popup-content');
-  const birthdayIconUrl = 'images/birthday-icon.png'; // Update this path to your icon
-  const currentYearElement = document.getElementById('current-year'); // Get the year element
+  const confettiContainer = document.createElement('div');
+  confettiContainer.className = 'confetti-container';
+  document.querySelector('.main-wrapper').prepend(confettiContainer); // Use prepend to ensure it's the first child
+  const birthdayIconUrl = 'images/birthday-icon.png';
+  const currentYearElement = document.getElementById('current-year');
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June', 
@@ -17,16 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const today = new Date();
-  let currentDate = new Date(today.getFullYear(), today.getMonth()); // Only month will change
+  let currentDate = new Date(today.getFullYear(), today.getMonth());
 
-  // Set the current year
   currentYearElement.textContent = today.getFullYear();
 
-  // Fetch birthdays from the JSON file
   fetch('birthdays.json')
     .then(response => response.json())
     .then(data => {
       displayCalendar(data);
+      if (isBirthdayToday(data)) {
+        triggerConfetti();
+      }
     })
     .catch(error => console.error('Error fetching birthdays:', error));
 
@@ -53,9 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function displayCalendar(data) {
     const isCurrentMonth = today.getMonth() === currentDate.getMonth();
     calendar.innerHTML = '';
-    dayNamesContainer.innerHTML = ''; // Clear previous day names
+    dayNamesContainer.innerHTML = '';
     const month = currentDate.getMonth();
-    const year = today.getFullYear(); // Keep the year constant
+    const year = today.getFullYear();
     currentMonthElement.textContent = monthNames[month];
     const firstDay = new Date(year, month, 1).getDay();
     const lastDate = new Date(year, month + 1, 0).getDate();
@@ -63,9 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevMonthLastDate = new Date(year, month, 0).getDate();
     let dayCount = 1;
     let prevMonthDayCount = prevMonthLastDate - firstDay + 1;
-    let nextMonthDayCount = 1; // Initialize nextMonthDayCount
+    let nextMonthDayCount = 1;
 
-    // Add day names row
     dayNames.forEach(dayName => {
       const dayNameElement = document.createElement('div');
       dayNameElement.className = 'day-name';
@@ -73,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dayNamesContainer.appendChild(dayNameElement);
     });
 
-    for (let i = 0; i < 42; i++) { // 7 days x 6 weeks = 42 cells
+    for (let i = 0; i < 42; i++) {
       const dayElement = document.createElement('div');
       dayElement.className = 'day';
 
@@ -81,12 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
       dayHeader.className = 'day-header';
 
       if (i < firstDay) {
-        // Display the previous month's days
         dayHeader.textContent = prevMonthDayCount;
         dayElement.classList.add('previous-month');
         prevMonthDayCount++;
       } else if (dayCount <= lastDate) {
-        // Display the current month days
         dayHeader.textContent = dayCount;
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCount).padStart(2, '0')}`;
 
@@ -107,27 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
           dayElement.appendChild(birthdayIcon);
 
           dayElement.addEventListener('click', () => {
-            popupContent.innerHTML = birthdays.map(event => `${event.name} joined SideQuest on ${new Date(event.birthday).toLocaleDateString()}`).join('<br>');
-            popup.classList.remove('fade-out');
-            popup.style.display = 'block';
-            setTimeout(() => {
-              popup.classList.add('fade-out');
-            }, 100); // Start the fade-out effect after a short delay
-
-            setTimeout(() => {
-              popup.style.display = 'none';
-            }, 3100); // Hide the popup after the fade-out duration
+            showPopup(birthdays);
           });
         }
 
         if (isCurrentMonth && dayCount === today.getDate()) {
           dayElement.classList.add('current-day');
-          console.log(`Highlighting current day: ${dayCount}`); // Debugging statement
         }
 
         dayCount++;
       } else {
-        // Display the next month's days if needed
         dayHeader.textContent = nextMonthDayCount;
         dayElement.classList.add('next-month');
         nextMonthDayCount++;
@@ -136,14 +126,61 @@ document.addEventListener('DOMContentLoaded', () => {
       dayElement.appendChild(dayHeader);
       calendar.appendChild(dayElement);
     }
+  }
 
-    document.body.addEventListener('click', (e) => {
-      if (popup.style.display === 'block' && !e.target.closest('.day')) {
-        popup.classList.add('fade-out');
-        setTimeout(() => {
-          popup.style.display = 'none';
-        }, 3000); // Hide the popup after the fade-out duration
+  function isBirthdayToday(data) {
+    const todayStr = `-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    return data.some(event => event.birthday.endsWith(todayStr));
+  }
+
+  let popupTimeout;
+
+  function showPopup(birthdays) {
+    clearTimeout(popupTimeout);
+    popup.classList.remove('fade-out');
+    popupContent.innerHTML = birthdays.map(event => `${event.name} joined SideQuest on ${new Date(event.birthday).toLocaleDateString()}`).join('<br>');
+    popup.style.display = 'block';
+    void popup.offsetWidth; // Trigger reflow to restart animation
+    popup.classList.add('fade-out');
+    popupTimeout = setTimeout(() => {
+      popup.style.display = 'none';
+    }, 3100); // Adjust the duration to match your fade-out animation
+  }
+
+  function triggerConfetti() {
+    for (let i = 0; i < 100; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = `${Math.random() * 100}%`;
+      confetti.style.top = `-${Math.random() * 20}px`; // Ensure it starts just above the container
+      confetti.style.backgroundColor = getRandomColor();
+      confettiContainer.appendChild(confetti);
+      confetti.style.animationDuration = `${Math.random() * 5 + 5}s`; // Random duration between 5-10 seconds
+      confetti.style.animationDelay = `${Math.random() * 2}s`; // Random delay between 0-2 seconds
+    }
+    setTimeout(() => {
+      confettiContainer.innerHTML = ''; // Clear the confetti after the animation duration
+    }, 12000); // Ensure this is longer than the longest animation duration
+  }
+
+  function getRandomColor() {
+    const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  // Use MutationObserver to monitor DOM changes
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
+        mutation.removedNodes.forEach(node => {
+          if (node.classList && node.classList.contains('confetti')) {
+            // Perform any necessary cleanup here
+          }
+        });
       }
     });
-  }
+  });
+
+  // Observe changes in the confettiContainer
+  observer.observe(confettiContainer, { childList: true });
 });
